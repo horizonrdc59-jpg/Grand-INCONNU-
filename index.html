@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explorations sur la préhistoire et le potentiel scientifique de la RDC. Explorations of the prehistory and scientific potential of the DRC.">
+<meta property="og:title" content="Le Grand Inconnu">
+<meta property="og:description" content="Ishango, Katanda et la Semliki : ce qui est établi, débattu et hypothétique. / What is established, debated and hypothetical.">
+<meta property="og:type" content="website">
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}</style>
+<title>Le Grand Inconnu</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap">
+<style>
+/* Concept: a field notebook for the Semliki valley. Basalt-ash neutrals, lake-water teal as the single accent,
+   laterite and ochre only as evidence labels. The one bold move is the tally of notches taken from the Ishango bone. */
+:root {
+  --bg: #E8ECEB;
+  --surface: #F5F7F6;
+  --fg: #1A2325;
+  --muted: #55656A;
+  --line: #C7D0CF;
+  --lake: #166A72;
+  --est-bg: #D3E6E7; --est-fg: #0E4C53;
+  --deb-bg: #F0E5C4; --deb-fg: #5E4306;
+  --hyp-bg: #F0DACF; --hyp-fg: #8A3417;
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181A; --surface: #182224; --fg: #E3EBEA; --muted: #94A5A7; --line: #2B3A3C;
+    --lake: #5CC2C9;
+    --est-bg: #17383B; --est-fg: #8FDADF;
+    --deb-bg: #3A3012; --deb-fg: #E8CD76;
+    --hyp-bg: #3A2218; --hyp-fg: #F0A483;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181A; --surface: #182224; --fg: #E3EBEA; --muted: #94A5A7; --line: #2B3A3C;
+  --lake: #5CC2C9;
+  --est-bg: #17383B; --est-fg: #8FDADF;
+  --deb-bg: #3A3012; --deb-fg: #E8CD76;
+  --hyp-bg: #3A2218; --hyp-fg: #F0A483;
+  color-scheme: dark;
+}
+
+/* language switch: only the inactive language is hidden */
+html:not([data-lang="en"]) [lang="en"] { display: none; }
+html[data-lang="en"] [lang="fr"] { display: none; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  background: var(--bg); z-index: 10;
+}
+.wrap {
+  max-width: 70rem; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--lake); text-underline-offset: 0.2em; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--lake); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.015em; }
+p { margin: 0; }
+.mono { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+
+/* top bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.7rem; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+.langs { display: flex; border: 1px solid var(--line); }
+.langs button {
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.35rem 0.7rem;
+  background: transparent; color: var(--muted); border: 0; cursor: pointer;
+}
+.langs button[aria-pressed="true"] { background: var(--lake); color: var(--bg); }
+
+/* views */
+.view { display: none; }
+.view.on { display: block; }
+
+/* hero */
+.hero { padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem); }
+.hero h1 { font-weight: 700; font-size: clamp(2.3rem, 7.2vw, 4.8rem); line-height: 1.02; max-width: 16ch; margin-top: 1rem; }
+.hero .lede { max-width: 38rem; margin-top: 1.4rem; font-size: 1.2rem; color: var(--muted); }
+.tally-fig { margin: 2.6rem 0 0; max-width: 36rem; }
+.tally { display: block; width: 100%; height: auto; }
+.tally path { stroke: var(--lake); stroke-width: 2.6; stroke-linecap: round; fill: none; }
+.tally text { fill: var(--muted); font-family: var(--font-mono); font-size: 18px; font-weight: 500; }
+.tally-fig figcaption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted); max-width: 34rem; }
+
+/* explorations */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+.section-head h2 { font-size: 1.5rem; font-weight: 700; }
+.explore { padding-block: 0 3rem; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+.card { background: var(--surface); border: 1px solid var(--line); padding: 1.3rem 1.3rem 1.4rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+.card h3 { font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
+.card p { color: var(--muted); font-size: 0.98rem; line-height: 1.55; }
+.card.feature { grid-column: span 2; border-top: 4px solid var(--lake); color: var(--fg); text-decoration: none; }
+.card.feature h3 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+.card.feature p { color: var(--fg); font-size: 1.08rem; max-width: 34rem; }
+.card.feature .go { margin-top: auto; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; color: var(--lake); }
+a.card.feature:hover h3 { text-decoration: underline; text-decoration-color: var(--lake); text-underline-offset: 0.18em; }
+.card.soon { background: transparent; border-style: dashed; }
+.card.soon h3 { color: var(--muted); }
+
+/* method */
+.method { padding-block: 0 4rem; }
+.method-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+.method-grid > div { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; min-width: 0; }
+.method-grid p { font-size: 0.98rem; line-height: 1.55; color: var(--muted); }
+.method .intro { margin-top: 1rem; max-width: 40rem; }
+
+/* evidence tags */
+.tag { display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.12rem 0.5rem; line-height: 1.5; vertical-align: 0.08em; }
+.tag.est { background: var(--est-bg); color: var(--est-fg); }
+.tag.deb { background: var(--deb-bg); color: var(--deb-fg); }
+.tag.hyp { background: var(--hyp-bg); color: var(--hyp-fg); }
+
+/* article */
+.article { padding-block: clamp(1.5rem, 4vw, 3rem) 4rem; }
+.back { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; }
+.a-head { margin-top: 2rem; max-width: 46rem; }
+.a-head h1 { font-size: clamp(2rem, 5.6vw, 3.6rem); font-weight: 700; line-height: 1.05; margin-top: 0.8rem; }
+.a-head .lede { margin-top: 1.2rem; font-size: 1.2rem; color: var(--muted); }
+.a-head .meta { margin-top: 1.2rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--muted); }
+.legend span.item { display: inline-flex; align-items: center; gap: 0.45rem; }
+.prose { max-width: 42rem; margin-top: 2.2rem; }
+.prose h2 { font-size: 1.7rem; font-weight: 700; line-height: 1.15; margin-top: 3rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+.prose h2:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+.prose p { margin-top: 1rem; }
+.prose ul, .prose ol { margin: 1rem 0 0; padding-left: 1.3rem; display: grid; gap: 0.55rem; }
+.prose li::marker { color: var(--lake); }
+.prose strong { font-weight: 650; }
+.prose .tally-fig { margin-top: 1.8rem; }
+
+/* stages diagram */
+.stages-fig { margin: 2rem 0 0; }
+.stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
+.stage { padding: 1rem 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.4rem; position: relative; min-width: 0; }
+.stage + .stage { border-left: 1px solid var(--line); }
+.stage .mono { color: inherit; opacity: 0.85; }
+.stage b { font-family: var(--font-display); font-size: 1.1rem; line-height: 1.2; font-weight: 650; }
+.stage span.d { font-size: 0.92rem; line-height: 1.45; }
+.stage.h { background: var(--est-bg); color: var(--est-fg); }
+.stage.v { background: var(--deb-bg); color: var(--deb-fg); }
+.stages-fig figcaption { margin-top: 0.6rem; font-size: 0.9rem; color: var(--muted); }
+
+.hypo li { padding-left: 0.2rem; }
+.sources { font-size: 0.95rem; line-height: 1.5; }
+.sources .note { color: var(--muted); }
+.sources li { overflow-wrap: anywhere; }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 1.4rem 2.4rem; }
+footer p { font-size: 0.85rem; color: var(--muted); max-width: 40rem; }
+
+@media (max-width: 760px) {
+  .cards, .method-grid { grid-template-columns: minmax(0, 1fr); }
+  .card.feature { grid-column: auto; }
+  .stages { grid-template-columns: minmax(0, 1fr); }
+  .stage + .stage { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card.feature h3 { transition: color 0.15s; }
+}
+</style>
+
+<script>
+(function () {
+  var lang = 'fr';
+  try {
+    var s = localStorage.getItem('gi-lang');
+    if (s === 'fr' || s === 'en') { lang = s; }
+    else if ((navigator.language || '').slice(0, 2) === 'en') { lang = 'en'; }
+  } catch (e) {}
+  document.documentElement.setAttribute('data-lang', lang);
+})();
+</script>
+
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#accueil">Le Grand Inconnu</a>
+    <div class="langs" role="group" aria-label="Langue / Language">
+      <button type="button" id="lang-fr" data-setlang="fr" aria-pressed="true">FR</button>
+      <button type="button" id="lang-en" data-setlang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============ HOME ============ -->
+<div class="view on" id="view-accueil">
+  <section class="hero wrap">
+    <p class="mono"><span lang="fr">Nord-Kivu, République démocratique du Congo</span><span lang="en">North Kivu, Democratic Republic of the Congo</span></p>
+    <h1><span lang="fr">Un pays dont l'histoire reste à chercher.</span><span lang="en">A country whose history is still waiting to be found.</span></h1>
+    <p class="lede">
+      <span lang="fr">Des explorations sur la préhistoire, la nature et le potentiel scientifique de la RDC. Chaque texte sépare ce qui est établi, ce qui est débattu et ce que nous proposons comme hypothèse.</span>
+      <span lang="en">Explorations of the prehistory, nature and scientific potential of the DRC. Each text separates what is established, what is debated and what we propose as a hypothesis.</span>
+    </p>
+    <figure class="tally-fig">
+      <svg class="tally" viewBox="0 0 560 94" role="img" aria-label="Soixante entailles en quatre groupes de 11, 21, 19 et 9"></svg>
+      <figcaption>
+        <span lang="fr">Une série d'entailles de l'os d'Ishango : 60 marques en quatre groupes de 11, 21, 19 et 9. Il y a environ 20&nbsp;000 ans, quelqu'un a gravé cela au bord d'un lac.</span>
+        <span lang="en">One series of notches on the Ishango bone: 60 marks in four groups of 11, 21, 19 and 9. About 20,000 years ago, someone carved this beside a lake.</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="explore wrap">
+    <div class="section-head">
+      <h2><span lang="fr">Explorations</span><span lang="en">Explorations</span></h2>
+      <span class="mono"><span lang="fr">1 publiée</span><span lang="en">1 published</span></span>
+    </div>
+    <div class="cards">
+      <a class="card feature" href="#ishango">
+        <span class="mono"><span lang="fr">Préhistoire · Premier jet</span><span lang="en">Prehistory · First draft</span></span>
+        <h3><span lang="fr">Ishango et la Semliki</span><span lang="en">Ishango and the Semliki</span></h3>
+        <p>
+          <span lang="fr">Un os gravé d'environ 20&nbsp;000 ans, des harpons de pêche d'environ 90&nbsp;000 ans, un lac, des volcans et une plage qui s'érode.</span>
+          <span lang="en">An engraved bone about 20,000 years old, fishing harpoons about 90,000 years old, a lake, volcanoes and a beach that is wearing away.</span>
+        </p>
+        <span class="go"><span lang="fr">Lire l'exploration →</span><span lang="en">Read the exploration →</span></span>
+      </a>
+      <div class="card soon">
+        <span class="mono"><span lang="fr">En préparation</span><span lang="en">In preparation</span></span>
+        <h3><span lang="fr">Kongo Central et Mayombe</span><span lang="en">Kongo Central and Mayombe</span></h3>
+        <p>
+          <span lang="fr">Ce que la géologie dit des chances de trouver des fossiles dans l'ouest du pays.</span>
+          <span lang="en">What geology says about the chances of finding fossils in the west of the country.</span>
+        </p>
+      </div>
+      <div class="card soon">
+        <span class="mono"><span lang="fr">En préparation</span><span lang="en">In preparation</span></span>
+        <h3><span lang="fr">Animaux et plantes uniques</span><span lang="en">Unique animals and plants</span></h3>
+        <p>
+          <span lang="fr">Bonobo, okapi, poissons des grands lacs, plantes encore peu étudiées.</span>
+          <span lang="en">Bonobo, okapi, fish of the great lakes, plants still little studied.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="method wrap">
+    <div class="section-head">
+      <h2><span lang="fr">Comment lire ce site</span><span lang="en">How to read this site</span></h2>
+    </div>
+    <p class="intro">
+      <span lang="fr">Chaque affirmation porte une étiquette, pour que le lecteur sache sur quoi elle s'appuie.</span>
+      <span lang="en">Every statement carries a label, so the reader knows what it rests on.</span>
+    </p>
+    <div class="method-grid">
+      <div>
+        <span class="tag est"><span lang="fr">Établi</span><span lang="en">Established</span></span>
+        <p><span lang="fr">Confirmé par plusieurs sources publiées, par exemple des fouilles et des publications scientifiques.</span><span lang="en">Confirmed by several published sources, such as excavations and scientific papers.</span></p>
+      </div>
+      <div>
+        <span class="tag deb"><span lang="fr">Débattu</span><span lang="en">Debated</span></span>
+        <p><span lang="fr">Les chercheurs ne sont pas d'accord, ou la méthode utilisée a des limites connues.</span><span lang="en">Researchers disagree, or the method used has known limits.</span></p>
+      </div>
+      <div>
+        <span class="tag hyp"><span lang="fr">Hypothèse</span><span lang="en">Hypothesis</span></span>
+        <p><span lang="fr">Une idée de ce site, construite à partir des sources, mais non démontrée.</span><span lang="en">An idea from this site, built on the sources but not proven.</span></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ ARTICLE: ISHANGO ============ -->
+<div class="view" id="view-ishango">
+  <article class="article wrap">
+    <a class="back" href="#accueil"><span lang="fr">← Toutes les explorations</span><span lang="en">← All explorations</span></a>
+
+    <header class="a-head">
+      <p class="mono"><span lang="fr">Exploration · Préhistoire</span><span lang="en">Exploration · Prehistory</span></p>
+      <h1><span lang="fr">Ishango et la Semliki</span><span lang="en">Ishango and the Semliki</span></h1>
+      <p class="lede">
+        <span lang="fr">Des pêcheurs vivaient au bord d'un lac et d'une rivière, sur un terrain secoué par des volcans et par des changements de climat. Pourquoi s'installaient-ils, partaient-ils, revenaient-ils ?</span>
+        <span lang="en">Fishers lived beside a lake and a river, on ground shaken by volcanoes and climate change. Why did they settle, leave and come back?</span>
+      </p>
+      <p class="meta mono"><span lang="fr">Premier jet · 7 novembre 2026</span><span lang="en">First draft · 7 November 2026</span></p>
+      <div class="legend">
+        <span class="item"><span class="tag est"><span lang="fr">Établi</span><span lang="en">Established</span></span><span lang="fr">sources concordantes</span><span lang="en">sources agree</span></span>
+        <span class="item"><span class="tag deb"><span lang="fr">Débattu</span><span lang="en">Debated</span></span><span lang="fr">avis partagés</span><span lang="en">views differ</span></span>
+        <span class="item"><span class="tag hyp"><span lang="fr">Hypothèse</span><span lang="en">Hypothesis</span></span><span lang="fr">notre déduction</span><span lang="en">our inference</span></span>
+      </div>
+    </header>
+
+    <div class="prose">
+
+      <!-- 1 -->
+      <h2><span lang="fr">Un pays dont l'histoire n'a pas encore été cherchée</span><span lang="en">A country whose history has not yet been searched for</span></h2>
+      <p lang="fr">La RDC passe pour un pays pauvre en traces de la préhistoire, mais la vallée de la Semliki dit le contraire : deux sites voisins, Ishango et Katanda, ont livré des objets de pêche et de comptage parmi les plus anciens d'Afrique.</p>
+      <p lang="en">The DRC is often seen as poor in prehistoric traces, yet the Semliki valley says otherwise: two neighbouring sites, Ishango and Katanda, have produced fishing and counting objects among the oldest in Africa.</p>
+      <p lang="fr">Ce texte réunit ce que les sources établissent sur ces deux sites, ce qui reste débattu, et ce que nous proposons comme hypothèses. Les hypothèses sont les nôtres : elles ne sont pas prouvées.</p>
+      <p lang="en">This text gathers what the sources establish about these two sites, what remains debated, and what we propose as hypotheses. The hypotheses are ours: they are not proven.</p>
+
+      <!-- 2 -->
+      <h2><span lang="fr">Ishango : ce qui est établi</span><span lang="en">Ishango: what is established</span></h2>
+      <p lang="fr"><span class="tag est">Établi</span> Ishango est un site de pêcheurs au bord du lac Édouard, à la sortie de la Semliki, dans le parc national des Virunga.</p>
+      <p lang="en"><span class="tag est">Established</span> Ishango is a fishing site on the shore of Lake Edward, where the Semliki River leaves the lake, inside Virunga National Park.</p>
+      <ul lang="fr">
+        <li>Le site a été repéré en 1935 par le zoologue Hubert Damas, puis fouillé en 1950 par le géologue belge Jean de Heinzelin.</li>
+        <li>Les fouilles ont montré des traces de poteaux plantés dans le sol : les restes d'anciennes cabanes.</li>
+        <li>On y a trouvé des harpons en os, des pointes barbelées, des outils en quartz et des restes de poissons, d'hippopotames, de buffles et d'antilopes.</li>
+        <li>Le premier village a été enseveli par une éruption volcanique. Le champ volcanique de Katwe se trouve tout près.</li>
+        <li>Les os ont survécu parce que les cendres volcaniques les ont fossilisés très vite, avant qu'ils ne se dégradent. Ishango est donc un cas de conservation rare, dû au volcan.</li>
+        <li>Les restes humains d'Ishango appartiennent à <em>Homo sapiens</em>.</li>
+      </ul>
+      <ul lang="en">
+        <li>The site was spotted in 1935 by the zoologist Hubert Damas, then excavated in 1950 by the Belgian geologist Jean de Heinzelin.</li>
+        <li>The excavations revealed traces of posts driven into the ground: the remains of former huts.</li>
+        <li>Finds include bone harpoons, barbed points, quartz tools and remains of fish, hippopotamus, buffalo and antelope.</li>
+        <li>The first village was buried by a volcanic eruption. The Katwe volcanic field lies close by.</li>
+        <li>The bones survived because volcanic ash fossilised them quickly, before they could decay. Ishango is therefore a rare case of preservation, owed to the volcano.</li>
+        <li>The human remains from Ishango belong to <em>Homo sapiens</em>.</li>
+      </ul>
+      <p lang="fr">L'os d'Ishango mesure environ 10 cm, porte 168 entailles réparties en trois colonnes, et est conservé à l'Institut royal des sciences naturelles de Belgique, à Bruxelles.</p>
+      <p lang="en">The Ishango bone is about 10 cm long, bears 168 notches arranged in three columns, and is kept at the Royal Belgian Institute of Natural Sciences in Brussels.</p>
+
+      <!-- 3 -->
+      <h2><span lang="fr">L'os d'Ishango : ce qui est débattu</span><span lang="en">The Ishango bone: what is debated</span></h2>
+      <p lang="fr"><span class="tag deb">Débattu</span> L'âge de l'os et le sens de ses entailles restent discutés.</p>
+      <p lang="en"><span class="tag deb">Debated</span> The age of the bone and the meaning of its notches are still discussed.</p>
+      <p lang="fr"><strong>La date.</strong> L'os a d'abord été daté de 9&nbsp;000 à 6&nbsp;500 av. J.-C. Une réévaluation du site l'a vieilli : on le place aujourd'hui vers 20&nbsp;000 ans, dans une fourchette d'environ 25&nbsp;000 à 16&nbsp;000 ans avant aujourd'hui. La précision est limitée, car l'activité volcanique voisine a perturbé les rapports d'isotopes du carbone, base de la datation.</p>
+      <p lang="en"><strong>The date.</strong> The bone was first dated to between 9,000 and 6,500 BCE. A re-evaluation of the site made it older: it is now placed at around 20,000 years, within a range of roughly 25,000 to 16,000 years before present. Precision is limited, because nearby volcanic activity disturbed the carbon isotope ratios that dating relies on.</p>
+      <p lang="fr"><strong>Le sens des entailles.</strong> Plusieurs lectures coexistent :</p>
+      <p lang="en"><strong>The meaning of the notches.</strong> Several readings coexist:</p>
+      <ul lang="fr">
+        <li>un outil de comptage ou de calcul, avec des séries de nombres que certains chercheurs ont rapprochées des nombres premiers ;</li>
+        <li>un calendrier lunaire ;</li>
+        <li>une simple décoration ou une prise pour tenir l'outil.</li>
+      </ul>
+      <ul lang="en">
+        <li>a counting or calculating tool, with number series that some researchers have linked to prime numbers;</li>
+        <li>a lunar calendar;</li>
+        <li>simple decoration, or a grip for holding the tool.</li>
+      </ul>
+      <figure class="tally-fig">
+        <svg class="tally" viewBox="0 0 560 94" role="img" aria-label="Soixante entailles en quatre groupes de 11, 21, 19 et 9"></svg>
+        <figcaption>
+          <span lang="fr">Une série d'entailles : 60 marques en quatre groupes de 11, 21, 19 et 9. Le dessin est schématique.</span>
+          <span lang="en">One series of notches: 60 marks in four groups of 11, 21, 19 and 9. The drawing is schematic.</span>
+        </figcaption>
+      </figure>
+      <p lang="fr">Aucune de ces lectures n'est prouvée. Il existe d'ailleurs des os gravés plus anciens ailleurs dans le monde, comme l'os de loup de Dolní Věstonice (République tchèque, environ 26&nbsp;000 ans) : dire que l'os d'Ishango est « le plus ancien outil mathématique » est une formule, pas un fait.</p>
+      <p lang="en">None of these readings is proven. Older engraved bones exist elsewhere in the world, such as the wolf bone from Dolní Věstonice (Czech Republic, about 26,000 years old): calling the Ishango bone "the oldest mathematical tool" is a slogan, not a fact.</p>
+
+      <!-- 4 -->
+      <h2><span lang="fr">Katanda : des harpons d'environ 90&nbsp;000 ans</span><span lang="en">Katanda: harpoons about 90,000 years old</span></h2>
+      <p lang="fr">Dans la même vallée, sur la haute Semliki, le site de Katanda a livré des harpons en os bien plus anciens que l'os d'Ishango.</p>
+      <p lang="en">In the same valley, on the upper Semliki, the Katanda site has produced bone harpoons far older than the Ishango bone.</p>
+      <p lang="fr"><span class="tag est">Établi</span></p>
+      <p lang="en"><span class="tag est">Established</span></p>
+      <ul lang="fr">
+        <li>Le premier harpon a été trouvé en 1988 par les archéologues Alison Brooks et John Yellen. Les résultats ont été publiés dans la revue <em>Science</em> en 1995.</li>
+        <li>Les pointes sont barbelées et polies. On a aussi trouvé un objet en forme de dague.</li>
+        <li>Le site est couvert d'os de poissons-chats, et la taille des pointes convient à de grands poissons-chats, qui pouvaient peser jusqu'à 68 kg.</li>
+      </ul>
+      <ul lang="en">
+        <li>The first harpoon was found in 1988 by the archaeologists Alison Brooks and John Yellen. The results were published in the journal <em>Science</em> in 1995.</li>
+        <li>The points are barbed and polished. A dagger-like object was also found.</li>
+        <li>The site is littered with catfish bones, and the size of the points suits large catfish, which could weigh up to 68 kg.</li>
+      </ul>
+      <p lang="fr"><span class="tag deb">Débattu</span> L'âge. L'équipe a utilisé quatre méthodes de datation, qui donnent toutes un âge ancien, entre 110&nbsp;000 et 80&nbsp;000 ans selon Brooks. Beaucoup de chercheurs ont d'abord refusé de croire à des outils aussi élaborés à cette époque. D'autres harpons trouvés ensuite ont renforcé la date, mais des sceptiques restent, car ces méthodes sont encore expérimentales.</p>
+      <p lang="en"><span class="tag deb">Debated</span> The age. The team used four dating methods, all of which give an old age, between 110,000 and 80,000 years according to Brooks. Many researchers at first refused to believe tools this elaborate existed so early. Harpoons found later strengthened the date, but sceptics remain, because these methods are still experimental.</p>
+      <p lang="fr"><span class="tag hyp">Hypothèse</span> Selon Brooks, les pêcheurs venaient au site chaque année, à la saison des poissons-chats. Si c'est vrai, cela suppose une capacité à prévoir et à planifier à l'avance.</p>
+      <p lang="en"><span class="tag hyp">Hypothesis</span> According to Brooks, the fishers came to the site every year, in the catfish season. If true, this implies an ability to anticipate and plan ahead.</p>
+
+      <!-- 5 -->
+      <h2><span lang="fr">Le Big Dry, les volcans et le mouvement des peuples</span><span lang="en">The Big Dry, volcanoes and the movement of peoples</span></h2>
+      <p lang="fr"><span class="tag est">Établi</span> Ishango n'a pas été occupé sans interruption : les couches du site montrent des allers-retours entre des périodes habitées et des périodes vides.</p>
+      <p lang="en"><span class="tag est">Established</span> Ishango was not occupied without a break: the layers of the site show a back and forth between inhabited and empty periods.</p>
+      <figure class="stages-fig">
+        <div class="stages">
+          <div class="stage h">
+            <span class="mono"><span lang="fr">Étape 1</span><span lang="en">Stage 1</span></span>
+            <b><span lang="fr">Milieu de savane</span><span lang="en">Savanna setting</span></b>
+          </div>
+          <div class="stage v">
+            <span class="mono"><span lang="fr">Étape 2</span><span lang="en">Stage 2</span></span>
+            <b><span lang="fr">Volcan et climat plus humide</span><span lang="en">Volcano and a wetter climate</span></b>
+            <span class="d"><span lang="fr">Aucune trace d'occupation humaine à Ishango.</span><span lang="en">No trace of human occupation at Ishango.</span></span>
+          </div>
+          <div class="stage h">
+            <span class="mono"><span lang="fr">Étape 3</span><span lang="en">Stage 3</span></span>
+            <b><span lang="fr">Retour des habitants</span><span lang="en">The inhabitants return</span></b>
+            <span class="d"><span lang="fr">Populations humaines, elles aussi adaptées à la savane.</span><span lang="en">Human populations, again adapted to the savanna.</span></span>
+          </div>
+        </div>
+        <figcaption>
+          <span lang="fr">Les trois étapes décrites à Ishango, de la plus ancienne à la plus récente (d'après l'étude de Peters).</span>
+          <span lang="en">The three stages described at Ishango, from oldest to most recent (after Peters' study).</span>
+        </figcaption>
+      </figure>
+      <p lang="fr"><strong>Ce que dit le site.</strong> Les sédiments des occupations reflètent un rivage mouvant le long d'un lac dont le niveau montait globalement.</p>
+      <p lang="en"><strong>What the site says.</strong> The sediments of the occupations reflect a shifting shoreline along a lake whose level was generally rising.</p>
+      <p lang="fr"><strong>Ce que dit le climat.</strong> Pendant le dernier maximum glaciaire, la forêt équatoriale d'Afrique centrale s'est contractée en zones refuges, tandis que la savane s'étendait. Les chercheurs appellent cette période le « Big Dry », la grande sécheresse. <span class="tag est">Établi</span> pour le principe général ; l'effet précis sur Ishango reste à démontrer.</p>
+      <p lang="en"><strong>What the climate says.</strong> During the Last Glacial Maximum, the equatorial forest of Central Africa shrank into refuge areas while the savanna spread. Researchers call this period the "Big Dry". <span class="tag est">Established</span> as a general principle; the precise effect on Ishango remains to be shown.</p>
+      <p lang="fr"><strong>Ce que disent les restes humains.</strong> L'archéologue Els Cornelissen rapporte que les chasseurs-pêcheurs d'Ishango ressemblent davantage à leurs contemporains, en Afrique et ailleurs, qu'aux habitants actuels de la région. <span class="tag deb">Débattu</span> Cela suggère que cette population ancienne a disparu ou a été remplacée, sans qu'on sache comment.</p>
+      <p lang="en"><strong>What the human remains say.</strong> The archaeologist Els Cornelissen reports that the hunter-fishers of Ishango resemble their contemporaries, in Africa and elsewhere, more than the people living in the region today. <span class="tag deb">Debated</span> This suggests that this ancient population disappeared or was replaced, without anyone knowing how.</p>
+      <p lang="fr"><strong>Ce que dit Katanda.</strong> Les pêcheurs y revenaient peut-être chaque année, ce qui serait un déplacement saisonnier. <span class="tag hyp">Hypothèse</span></p>
+      <p lang="en"><strong>What Katanda says.</strong> The fishers may have returned there every year, which would be a seasonal movement. <span class="tag hyp">Hypothesis</span></p>
+
+      <!-- 6 -->
+      <h2><span lang="fr">Nos hypothèses</span><span lang="en">Our hypotheses</span></h2>
+      <p lang="fr">Ces idées sont les nôtres. Elles s'appuient sur les sources ci-dessus, mais aucune n'est démontrée.</p>
+      <p lang="en">These ideas are ours. They rest on the sources above, but none is demonstrated.</p>
+      <ol class="hypo" lang="fr">
+        <li><strong>Le volcan et le lac ont chassé les habitants.</strong> L'éruption qui a enseveli le premier village est un fait. Que les habitants soient partis à cause d'elle, puis revenus plus tard, est notre déduction à partir des trois étapes du site.</li>
+        <li><strong>Le lac a pu servir de refuge pendant les périodes sèches.</strong> Quand la savane s'étendait, un lac et une rivière gardaient de l'eau et du poisson. Cela expliquerait pourquoi des groupes se rassemblaient dans cette vallée. À tester contre les données climatiques locales.</li>
+        <li><strong>Ishango et Katanda ont pu fonctionner de la même façon.</strong> À Katanda, Brooks propose une visite saisonnière ; à Ishango, les traces de cabanes indiquent des séjours assez longs. Entre campement saisonnier et village semi-sédentaire, les données actuelles ne tranchent pas.</li>
+        <li><strong>Il existe sans doute d'autres sites autour.</strong> Des sites de plein air voisins, comme Kabale, Katanda et Kasaka, sont déjà connus sur les rives de la haute Semliki et du lac. Cela rend probable que d'autres restent enfouis, sous les sédiments et les cendres.</li>
+        <li><strong>La géologie peut guider la recherche.</strong> Au lieu de creuser au hasard, on peut chercher d'abord là où le sol conserve : sédiments de lacs et de rivières, cendres volcaniques, roches sédimentaires. L'idée est classique en paléontologie, mais reste à vérifier pour chaque région de la RDC.</li>
+      </ol>
+      <ol class="hypo" lang="en">
+        <li><strong>The volcano and the lake drove the inhabitants away.</strong> The eruption that buried the first village is a fact. That the inhabitants left because of it, then came back later, is our inference from the three stages of the site.</li>
+        <li><strong>The lake may have served as a refuge during dry periods.</strong> When the savanna spread, a lake and a river kept water and fish. This would explain why groups gathered in this valley. To be tested against local climate data.</li>
+        <li><strong>Ishango and Katanda may have worked the same way.</strong> At Katanda, Brooks proposes a seasonal visit; at Ishango, the traces of huts point to fairly long stays. Between seasonal camp and semi-settled village, current data do not decide.</li>
+        <li><strong>Other sites probably lie nearby.</strong> Neighbouring open-air sites, such as Kabale, Katanda and Kasaka, are already known on the banks of the upper Semliki and the lake. This makes it likely that others remain buried, under sediments and ash.</li>
+        <li><strong>Geology can guide the search.</strong> Instead of digging at random, one can look first where the ground preserves: lake and river sediments, volcanic ash, sedimentary rock. The idea is standard in palaeontology, but still has to be checked for each region of the DRC.</li>
+      </ol>
+
+      <!-- 7 -->
+      <h2><span lang="fr">Un patrimoine menacé aujourd'hui</span><span lang="en">A heritage under threat today</span></h2>
+      <p lang="fr">La plage d'Ishango s'érode de plus en plus vite, et le site pourrait être abîmé avant d'être entièrement étudié. <strong>Signalé</strong> par des sources locales et des conservationnistes, à confirmer par un suivi scientifique.</p>
+      <p lang="en">Ishango beach is eroding ever faster, and the site could be damaged before it has been fully studied. <strong>Reported</strong> by local sources and conservationists, to be confirmed by scientific monitoring.</p>
+      <ul lang="fr">
+        <li>Des responsables et des militants de la conservation signalent une érosion latérale accélérée de la plage et un déplacement progressif du cours de la rivière, liés à la dégradation des berges.</li>
+        <li>Causes citées : déforestation non contrôlée, surpâturage, activités humaines dans la vallée de la Semliki, pollution de l'eau du lac Édouard. Le changement climatique aggrave la situation.</li>
+        <li>Les autorités du parc mènent depuis plusieurs mois une opération contre l'exploitation illégale du bois et la production de charbon dans la vallée.</li>
+        <li>Le parc national des Virunga est inscrit sur la liste du patrimoine mondial en péril de l'UNESCO depuis 1994.</li>
+      </ul>
+      <ul lang="en">
+        <li>Conservation officials and activists report accelerated lateral erosion of the beach and a gradual shift in the river's course, linked to degraded riverbanks.</li>
+        <li>Causes cited: uncontrolled deforestation, overgrazing, human activity in the Semliki valley, and pollution of Lake Edward's water. Climate change makes things worse.</li>
+        <li>For several months, park authorities have been running an operation against illegal logging and charcoal production in the valley.</li>
+        <li>Virunga National Park has been on UNESCO's List of World Heritage in Danger since 1994.</li>
+      </ul>
+      <p lang="fr">Le lien avec notre sujet est direct : la plage protège le site, et la perdre reviendrait à perdre une partie de ce qui reste à découvrir.</p>
+      <p lang="en">The link to our subject is direct: the beach protects the site, and losing it would mean losing part of what remains to be discovered.</p>
+
+      <!-- 8 -->
+      <h2><span lang="fr">Ce qu'il reste à chercher</span><span lang="en">What remains to be found</span></h2>
+      <p lang="fr">La Semliki pourrait devenir un laboratoire à ciel ouvert pour la préhistoire de la RDC. Les pistes ci-dessous sont des propositions à évaluer, pas des projets existants.</p>
+      <p lang="en">The Semliki could become an open-air laboratory for the prehistory of the DRC. The leads below are proposals to evaluate, not existing projects.</p>
+      <ul lang="fr">
+        <li>Cartographier d'autres sites autour d'Ishango et de Katanda, en partant de la géologie : sédiments de lac et de rivière, cendres volcaniques.</li>
+        <li>Mieux dater l'os et les couches, avec des méthodes qui tiennent compte de la perturbation volcanique.</li>
+        <li>Chercher des indices de saisonnalité (poissons, saisons de pêche) pour trancher entre campement saisonnier et village semi-sédentaire.</li>
+        <li>Étudier la continuité entre les populations anciennes et celles d'aujourd'hui.</li>
+      </ul>
+      <ul lang="en">
+        <li>Map other sites around Ishango and Katanda, starting from geology: lake and river sediments, volcanic ash.</li>
+        <li>Date the bone and the layers better, with methods that account for the volcanic disturbance.</li>
+        <li>Look for signs of seasonality (fish, fishing seasons) to decide between seasonal camp and semi-settled village.</li>
+        <li>Study the continuity between ancient populations and those of today.</li>
+      </ul>
+      <p lang="fr"><span class="tag hyp">Hypothèse</span> <strong>Idée de projet pilote.</strong> Un programme de deux ou trois ans autour d'Ishango et de la haute Semliki, associant des chercheurs congolais et étrangers, le parc des Virunga et les communautés de pêcheurs voisines. Les objectifs : protéger le site contre l'érosion, former des équipes locales, et ouvrir un petit centre d'accueil pour le public. Le budget et les partenaires restent à définir.</p>
+      <p lang="en"><span class="tag hyp">Hypothesis</span> <strong>Pilot project idea.</strong> A two- or three-year programme around Ishango and the upper Semliki, bringing together Congolese and foreign researchers, Virunga park and the neighbouring fishing communities. Goals: protect the site from erosion, train local teams, and open a small visitor centre. Budget and partners are still to be defined.</p>
+      <p lang="fr"><strong>Questions encore ouvertes.</strong> À qui appartient moralement et juridiquement l'os conservé à Bruxelles, et pourrait-il être exposé en RDC ? Nous n'avons pas encore étudié cette question. Que dit la géologie du Kongo Central et du Mayombe sur les chances de découvrir des fossiles ? Ce sera l'objet d'un prochain texte.</p>
+      <p lang="en"><strong>Open questions.</strong> Who owns the bone kept in Brussels, morally and legally, and could it be displayed in the DRC? We have not yet studied this question. What does the geology of Kongo Central and Mayombe say about the chances of finding fossils? That will be the subject of a later text.</p>
+
+      <!-- 9 -->
+      <h2><span lang="fr">Sources</span><span lang="en">Sources</span></h2>
+      <p class="sources note" lang="fr">Consultées le 7 novembre 2026, en grande partie à partir d'extraits de résultats de recherche. À vérifier dans les textes complets avant toute citation.</p>
+      <p class="sources note" lang="en">Consulted on 7 November 2026, largely from search result excerpts. Check against the full texts before quoting.</p>
+      <ul class="sources">
+        <li><a href="https://en.wikipedia.org/wiki/Ishango_bone">Ishango bone, Wikipedia</a> <span class="note"><span lang="fr">: description de l'os, datation, interprétations.</span><span lang="en">: description of the bone, dating, interpretations.</span></span></li>
+        <li><a href="https://en.wikipedia.org/wiki/Ishango">Ishango, Wikipedia</a> <span class="note"><span lang="fr">: site, fouilles, parc des Virunga.</span><span lang="en">: site, excavations, Virunga park.</span></span></li>
+        <li><a href="https://naturalsciences.be/file/cc73d96153bbd5448a56f19d925d05b1379c7f21/369895724a871d793f603e27d8e31fae74fdbf13/inst_202403_brochure_ishango_en_fv.pdf">Royal Belgian Institute of Natural Sciences, Ishango brochure</a> <span class="note"><span lang="fr">: stratigraphie, cendres volcaniques, cabanes.</span><span lang="en">: stratigraphy, volcanic ash, huts.</span></span></li>
+        <li><a href="https://core.ac.uk/download/12169042.pdf">Peters, study of the Ishango site</a> <span class="note"><span lang="fr">: les trois étapes du site.</span><span lang="en">: the three stages of the site.</span></span></li>
+        <li><a href="https://orfeo.belnet.be/handle/internal/13085">Cornelissen (2023), Challenges and opportunities during the Last Glacial Maximum</a> <span class="note"><span lang="fr">: Big Dry, population d'Ishango.</span><span lang="en">: Big Dry, the Ishango population.</span></span></li>
+        <li><a href="https://en.wikipedia.org/wiki/Semliki_harpoon">Semliki harpoon, Wikipedia</a> et <a href="https://www.discovermagazine.com/the-slow-crawl-forward-11798">Discover Magazine, The Slow Crawl Forward</a> <span class="note"><span lang="fr">: Katanda, datation, pêche saisonnière.</span><span lang="en">: Katanda, dating, seasonal fishing.</span></span></li>
+        <li><a href="https://web.astronomicalheritage.org/images/astronomicalheritage.org/thematic-study/ch01cs3.pdf">UNESCO astronomical heritage thematic study</a> <span class="note"><span lang="fr">: fourchette de datation de l'os, sites voisins, groupes d'entailles.</span><span lang="en">: dating range of the bone, neighbouring sites, notch groups.</span></span></li>
+        <li><a href="https://friendsofthecongo.org/drc-ishango-beach-under-threat-of-disappearing/">Friends of the Congo, Ishango beach under threat</a> <span class="note"><span lang="fr">: menaces actuelles.</span><span lang="en">: current threats.</span></span></li>
+        <li><a href="https://whc.unesco.org/en/list/63/indicators">UNESCO, Virunga National Park</a> <span class="note"><span lang="fr">: liste du patrimoine en péril.</span><span lang="en">: List of World Heritage in Danger.</span></span></li>
+      </ul>
+    </div>
+  </article>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      <span lang="fr">Le Grand Inconnu est un nom de travail. Version de travail du 7 novembre 2026 : les hypothèses sont signalées comme telles et restent à vérifier.</span>
+      <span lang="en">Le Grand Inconnu is a working name. Working version of 7 November 2026: hypotheses are marked as such and remain to be checked.</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  /* language buttons */
+  var buttons = document.querySelectorAll('[data-setlang]');
+  function paint() {
+    var cur = root.getAttribute('data-lang') === 'en' ? 'en' : 'fr';
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('aria-pressed', buttons[i].getAttribute('data-setlang') === cur ? 'true' : 'false');
+    }
+  }
+  for (var b = 0; b < buttons.length; b++) {
+    buttons[b].addEventListener('click', function (ev) {
+      var l = ev.currentTarget.getAttribute('data-setlang');
+      root.setAttribute('data-lang', l);
+      try { localStorage.setItem('gi-lang', l); } catch (e) {}
+      paint();
+    });
+  }
+  paint();
+
+  /* tally of notches: groups of 11, 21, 19 and 9 */
+  var svgs = document.querySelectorAll('svg.tally');
+  var groups = [11, 21, 19, 9];
+  var gap = 7.5, groupGap = 30;
+  for (var s = 0; s < svgs.length; s++) {
+    var x = 6, d = '', labels = '';
+    for (var g = 0; g < groups.length; g++) {
+      var start = x;
+      for (var k = 0; k < groups[g]; k++) {
+        var h = 34 + ((k * 7 + g * 3) % 4) * 5;
+        d += 'M' + x.toFixed(1) + ' 6V' + (6 + h);
+        x += gap;
+      }
+      var mid = (start + x - gap) / 2;
+      labels += '<text x="' + mid.toFixed(1) + '" y="82" text-anchor="middle">' + groups[g] + '</text>';
+      x += groupGap - gap;
+    }
+    svgs[s].innerHTML = '<path d="' + d + '"/>' + labels;
+  }
+
+  /* hash routing between home and the article */
+  var views = {
+    accueil: document.getElementById('view-accueil'),
+    ishango: document.getElementById('view-ishango')
+  };
+  function route() {
+    var h = (location.hash || '').replace('#', '');
+    if (!views[h]) { h = 'accueil'; }
+    for (var k in views) {
+      if (views.hasOwnProperty(k)) { views[k].classList.toggle('on', k === h); }
+    }
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+
+</body>
+</html>
